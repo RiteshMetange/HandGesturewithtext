@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gesture Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            text-align: center;
+            padding-top: 60px;
+        }
+        h1 {
+            font-size: 36px;
+            color: #333;
+        }
+        .word-box {
+            margin-top: 40px;
+            font-size: 48px;
+            font-weight: bold;
+            color: #27ae60;
+            border: 3px solid #27ae60;
+            display: inline-block;
+            padding: 20px 40px;
+            border-radius: 10px;
+            min-width: 300px;
+        }
+        button {
+            font-size: 20px;
+            padding: 12px 25px;
+            margin-top: 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Live Hand Gesture Detection</h1>
+
+    <form action="/userdetectgesture" method="POST">
+        <button type="submit">Start Camera</button>
+    </form>
+
+    <div class="word-box" id="output">
+    Show Gesture...
+</div>
+
+<script>
+    let lastSpokenText = "";
+
+    function speakText(text) {
+        if (!text || text === "Waiting for gestures..." || text === "Show Gesture...") {
+            return;
+        }
+
+        // Avoid repeating same text
+        if (text === lastSpokenText) return;
+
+        lastSpokenText = text;
+
+        // Stop previous speech
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 1;
+        utterance.pitch = 1;
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function fetchText() {
+        fetch("/get_text")
+            .then(response => response.json())
+            .then(data => {
+                const outputDiv = document.getElementById("output");
+                const newText = data.text || "Waiting for gestures...";
+
+                outputDiv.innerText = newText;
+
+                // 🔊 Speak ONLY div text
+                speakText(newText);
+            })
+            .catch(err => console.error(err));
+    }
+
+    // Poll backend every 300ms
+    setInterval(fetchText, 300);
+</script>
+
+
+
+</body>
+</html>
