@@ -1,0 +1,19 @@
+Python 3.8.10
+after venv
+
+mediapipe 0.10.5
+
+protobuf 3.20.3
+
+tensorflow 2.10.0
+
+opencv-python (any recent)
+
+
+
+mediapipe==0.10.5
+protobuf==3.20.3
+tensorflow==2.10.0
+opencv-python>=4.7.0
+numpy<1.24
+Flask==2.2.5
